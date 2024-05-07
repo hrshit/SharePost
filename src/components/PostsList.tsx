@@ -5,37 +5,40 @@ import { useState } from 'react';
 import Modal from "./Modal"
 
 function PostLists({isPosting, onCancelPost }){
-  const [startvalue, setStartValue] = useState('');
-  const [author, setAuthor] = useState('');
-  
+  const [posts, setPosts] = useState([]);
 
-  function changeBodyHandler(event){
-    console.log(event.target.value);
-    setStartValue(event.target.value);
+  function addPostHandler(postData) {
+    setPosts((existingPosts) => [postData, ...existingPosts]);
   }
-
-  function changeAuthorHandler(event){
-    setAuthor(event.target.value)
-  }
-
   
-  // console.log("visibilily value", isVisible)
-
   return(
     <>
 
       {isPosting && (
           <Modal onClose={onCancelPost}>
-            <NewPost onBodyChange={changeBodyHandler} onAuthorChange={changeAuthorHandler}/>
+            <NewPost 
+              onCancel={onCancelPost}
+              onAddPost={addPostHandler}
+            />
           </Modal>
         )
       }
       
-    <ul className={classes.posts}>
-      <Post author={author} body={startvalue}/>
-      <Post author="Janak" body="Hello good morning"/>
-      <Post author="satish" body="welll good enough"/>    
+    <ul >
+      {posts.length > 0 && (
+        <ul className={classes.posts}>
+            {posts.map((post) => (
+              <Post author={post.author} body={post.body}/>
+            ))}
+        </ul>
+      )}   
     </ul>
+      {posts.length ===0 && (
+        <div style={{textAlign: 'center', color: "white"}}>
+            <h2>There are no post yet</h2>
+            <p>Start adding some</p>
+        </div>
+      )}
     
     </>
   )
